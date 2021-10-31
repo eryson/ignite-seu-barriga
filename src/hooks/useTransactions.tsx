@@ -1,5 +1,11 @@
-import { createContext, useEffect, useState, ReactNode } from "react";
-import { api } from "./services/api";
+import {
+  createContext,
+  useEffect,
+  useState,
+  ReactNode,
+  useContext,
+} from "react";
+import { api } from "../services/api";
 
 interface Transaction {
   id: number;
@@ -21,7 +27,7 @@ interface TransactionsContextData {
   createTransaction(transaction: TransactionInput): Promise<void>;
 }
 
-export const TransactionsContext = createContext<TransactionsContextData>(
+const TransactionsContext = createContext<TransactionsContextData>(
   {} as TransactionsContextData
 );
 
@@ -50,4 +56,16 @@ export function TransactionProvider({ children }: TransactionProviderProps) {
       {children}
     </TransactionsContext.Provider>
   );
+}
+
+export function useTransactions() {
+  const context = useContext(TransactionsContext);
+
+  if (!context) {
+    throw new Error(
+      "useTransactions must be used within a TransactionProvider"
+    );
+  }
+
+  return context;
 }
